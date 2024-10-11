@@ -60,87 +60,88 @@
     </form>
 
     <script>
-        const words = [
-            {word: "Garba", icon: "🪘"}, 
-            {word: "Dandiya", icon: "🪔"}, 
-            {word: "Durga", icon: "🕉️"}, 
-            {word: "Rangoli", icon: "🎨"}, 
-            {word: "Chaniya Choli", icon: "👗"}, 
-            {word: "Aarti", icon: "🙏"}, 
-            {word: "Bhajan", icon: "🎶"}, 
-            {word: "Mata Rani", icon: "👑"}, 
-            {word: "Devotion", icon: "💖"}, 
-            {word: "Fasting", icon: "🍴"}, 
-            {word: "Pooja Thali", icon: "🍂"}, 
-            {word: "Kumkum", icon: "🔴"}, 
-            {word: "Chanting", icon: "📿"}, 
-            {word: "Festival Lights", icon: "💡"}, 
-            {word: "Mandir", icon: "🏰"}, 
-            {word: "Shakti", icon: "🔥"}, 
-            {word: "Navratri Colors", icon: "🌈"}, 
-            {word: "Folk Dance", icon: "🩰"}, 
-            {word: "Devotees", icon: "🕴️"}, 
-            {word: "Prasad", icon: "🍲"}, 
-            {word: "Ghagra", icon: "👚"}, 
-            {word: "Trishul", icon: "🔱"}, 
-            {word: "Kalash", icon: "🏺"}, 
-            {word: "Chant", icon: "🔊"}, 
-            {word: "Blessings", icon: "🙏"}, 
-            {word: "Shiva", icon: "🕉️"}, 
-            {word: "Navratri Dance", icon: "💃"}, 
-            {word: "Devotional Songs", icon: "🎵"}, 
-            {word: "Mahishasura", icon: "🐃"}, 
-            {word: "Victory of Good", icon: "✨"}
-        ];
-        
-        const selectedWords = [];
-        const maxSelection = 20;
-        const wordGrid = document.getElementById("wordGrid");
+    const words = [
+        {word: "Garba", icon: "🪘"}, 
+        {word: "Dandiya", icon: "🪔"}, 
+        {word: "Durga", icon: "🕉️"}, 
+        {word: "Rangoli", icon: "🎨"}, 
+        {word: "Chaniya Choli", icon: "👗"}, 
+        {word: "Aarti", icon: "🙏"}, 
+        {word: "Bhajan", icon: "🎶"}, 
+        {word: "Mata Rani", icon: "👑"}, 
+        {word: "Devotion", icon: "💖"}, 
+        {word: "Fasting", icon: "🍴"}, 
+        {word: "Pooja Thali", icon: "🍂"}, 
+        {word: "Kumkum", icon: "🔴"}, 
+        {word: "Chanting", icon: "📿"}, 
+        {word: "Festival Lights", icon: "💡"}, 
+        {word: "Mandir", icon: "🏰"}, 
+        {word: "Shakti", icon: "🔥"}, 
+        {word: "Navratri Colors", icon: "🌈"}, 
+        {word: "Folk Dance", icon: "🩰"}, 
+        {word: "Devotees", icon: "🕴️"}, 
+        {word: "Prasad", icon: "🍲"}, 
+        {word: "Ghagra", icon: "👚"}, 
+        {word: "Trishul", icon: "🔱"}, 
+        {word: "Kalash", icon: "🏺"}, 
+        {word: "Chant", icon: "🔊"}, 
+        {word: "Blessings", icon: "🙏"}, 
+        {word: "Shiva", icon: "🕉️"}, 
+        {word: "Navratri Dance", icon: "💃"}, 
+        {word: "Devotional Songs", icon: "🎵"}, 
+        {word: "Mahishasura", icon: "🐃"}, 
+        {word: "Victory of Good", icon: "✨"}
+    ];
+    
+    const selectedWords = [];
+    const maxSelection = 9;  // Changed from 20 to 9
+    const wordGrid = document.getElementById("wordGrid");
 
-        // Generate word boxes
-        words.forEach(({word, icon}) => {
-            const div = document.createElement('div');
-            div.classList.add('word-box');
-            div.innerHTML = `${icon} ${word}`;
-            div.onclick = () => selectWord(word, div);
-            wordGrid.appendChild(div);
-        });
+    // Generate word boxes
+    words.forEach(({word, icon}) => {
+        const div = document.createElement('div');
+        div.classList.add('word-box');
+        div.innerHTML = `${icon} ${word}`;
+        div.onclick = () => selectWord(word, div);
+        wordGrid.appendChild(div);
+    });
 
-        function selectWord(word, element) {
-            if (selectedWords.includes(word)) {
-                selectedWords.splice(selectedWords.indexOf(word), 1);
-                element.classList.remove('selected');
-            } else if (selectedWords.length < maxSelection) {
-                selectedWords.push(word);
-                element.classList.add('selected');
-            } else {
-                alert("You can only select 20 words.");
-            }
+    function selectWord(word, element) {
+        if (selectedWords.includes(word)) {
+            selectedWords.splice(selectedWords.indexOf(word), 1);
+            element.classList.remove('selected');
+        } else if (selectedWords.length < maxSelection) {
+            selectedWords.push(word);
+            element.classList.add('selected');
+        } else {
+            alert("You can only select 9 words.");  // Updated alert message
+        }
+    }
+
+    document.getElementById("playerForm").onsubmit = function (e) {
+        e.preventDefault();
+        const playerName = document.getElementById("playerName").value;
+
+        if (selectedWords.length !== maxSelection) {
+            alert("Please select exactly 9 words.");  // Updated condition
+            return;
         }
 
-        document.getElementById("playerForm").onsubmit = function (e) {
-            e.preventDefault();
-            const playerName = document.getElementById("playerName").value;
-
-            if (selectedWords.length !== maxSelection) {
-                alert("Please select exactly 20 words.");
-                return;
-            }
-
-            fetch('/submit_player', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: playerName,
-                    words: selectedWords
-                })
+        fetch('/submit_player', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: playerName,
+                words: selectedWords
             })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-                window.location.reload();
-            });
-        };
-    </script>
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            window.location.reload();
+        });
+    };
+</script>
+
 </body>
 </html>
