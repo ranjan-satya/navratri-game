@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navratri Game Manager</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #E0F7FA;
+            color: #283593;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #C2185B;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #283593;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #FFCDD2;
+            color: #C2185B;
+        }
+        td {
+            background-color: #F3E5F5;
+        }
+        #status {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .session-buttons {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button.stop {
+            background-color: #FF5722;
+        }
+    </style>
+</head>
+<body>
+    <h1>Navratri Game Results</h1>
+
+    <div class="session-buttons">
+        <button onclick="startSession()">Start Game Session</button>
+        <button class="stop" onclick="stopSession()">Stop Game Session</button>
+    </div>
+
+    <div id="status">Session Status: <span id="sessionStatus">Inactive</span></div>
+
+    <div id="managerWords">
+        <strong>Manager's words:</strong> <span id="managerWordList"></span>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Player Name</th>
+                <th>Submitted Words</th>
+                <th>Matches</th>
+            </tr>
+        </thead>
+        <tbody id="resultsTable">
+            <!-- Results will be dynamically loaded here -->
+        </tbody>
+    </table>
+
+    <script>
+        const wordsWithIcons = {
+            "Garba": "🪘", "Dandiya": "🪔", "Durga": "🕉️", "Rangoli": "🎨", 
+            "Chaniya Choli": "👗", "Aarti": "🙏", "Bhajan": "🎶", "Mata Rani": "👑",
+            "Devotion": "💖", "Fasting": "🍴", "Pooja Thali": "🍂", "Kumkum": "🔴",
+            "Chanting": "📿", "Festival Lights": "💡", "Mandir": "🏰", "Shakti": "🔥",
+            "Navratri Colors": "🌈", "Folk Dance": "🩰", "Devotees": "🕴️", "Prasad": "🍲",
+            "Ghagra": "👚", "Trishul": "🔱", "Kalash": "🏺", "Chant": "🔊",
+            "Blessings": "🙏", "Shiva": "🕉️", "Navratri Dance": "💃", "Devotional Songs": "🎵",
+            "Mahishasura": "🐃", "Victory of Good": "✨"
+        };
+
+        const managerWords = [
+            "Garba", "Durga", "Rangoli", "Aarti", "Pooja Thali", "Chaniya Choli",
+            "Navratri Colors", "Trishul", "Shakti", "Folk Dance", "Dandiya",
+            "Bhajan", "Mata Rani", "Devotion", "Fasting", "Kumkum", "Chanting",
+            "Festival Lights", "Mandir", "Blessings"
+        ];
+
+        const managerWordList = managerWords.map(word => `${wordsWithIcons[word]} ${word}`).join(", ");
+        document.getElementById("managerWordList").innerText = managerWordList;
+
+        function loadResults() {
+            fetch('/get_results')
+            .then(response => response.json())
+            .then(data => {
+                const resultsTable = document.getElementById("resultsTable");
+                resultsTable.innerHTML = "";
+                data.forEach(result => {
+                    const row = document.createElement('tr');
+
+                    const nameCell = document.createElement('td');
+                    nameCell.innerText = result.name;
+
+                    const wordsCell = document.createElement('td');
+                    wordsCell.innerText = result.words.map(word => `${wordsWithIcons[word]} ${word}`).join(", ");
+
+                    const matchesCell = document.createElement('td');
+                    matchesCell.innerText = result.matches;
+
+                    row.appendChild(nameCell);
+                    row.appendChild(wordsCell);
+                    row.appendChild(matchesCell);
+
+                    resultsTable.appendChild(row);
+                });
+            });
+        }
+
+        function startSession() {
+            fetch('/start_session', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById("sessionStatus").innerText = "Active";
+                    loadResults();  // Clear old results when session starts
+                });
+        }
+
+        function stopSession() {
+            fetch('/stop_session', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    document.getElementById("sessionStatus").innerText = "Inactive";
+                });
+        }
+
+        loadResults();  // Load results initially
+    </script>
+</body>
+</html>
