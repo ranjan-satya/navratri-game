@@ -45,11 +45,14 @@ def stop_session():
 @app.route('/submit_player', methods=['POST'])
 def submit_player():
     if not session_active:
-        return jsonify({"message": "Game session is not active!"}), 403  # Reject if session is not active
+        return jsonify({"message": "Game session is not active!"}), 403
 
     data = request.json
     player_name = data['name']
     submitted_words = data['words']
+
+    if len(submitted_words) != 9:  # Enforce the 9-word limit
+        return jsonify({"message": "You must submit exactly 9 words!"}), 400
 
     # Add player submission to in-memory storage
     players_submissions.append({
@@ -58,6 +61,7 @@ def submit_player():
     })
 
     return jsonify({"message": "Submission successful!"})
+
 
 @app.route('/get_results', methods=['GET'])
 def get_results():
