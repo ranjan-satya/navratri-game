@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
-server = app.server
+server = app
 
 # Manager's words (without emojis) - now 20 words
 manager_words = [
@@ -79,4 +79,4 @@ def get_results():
     return jsonify(results)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run(debug=True)
